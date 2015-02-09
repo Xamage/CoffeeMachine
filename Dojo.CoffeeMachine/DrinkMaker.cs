@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Dojo.CoffeeMachine
 {
-    public class DrinkMaker
+    public class DrinkMaker : IDrinkMaker
     {
         public void Process(string order)
         {
