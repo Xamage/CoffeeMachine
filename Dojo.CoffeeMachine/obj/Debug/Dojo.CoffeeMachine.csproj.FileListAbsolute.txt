@@ -1,0 +1,5 @@
+C:\github\CoffeeMachine\Dojo.CoffeeMachine\bin\Debug\Dojo.CoffeeMachine.dll
+C:\github\CoffeeMachine\Dojo.CoffeeMachine\bin\Debug\Dojo.CoffeeMachine.pdb
+C:\github\CoffeeMachine\Dojo.CoffeeMachine\obj\Debug\Dojo.CoffeeMachine.csprojResolveAssemblyReference.cache
+C:\github\CoffeeMachine\Dojo.CoffeeMachine\obj\Debug\Dojo.CoffeeMachine.dll
+C:\github\CoffeeMachine\Dojo.CoffeeMachine\obj\Debug\Dojo.CoffeeMachine.pdb

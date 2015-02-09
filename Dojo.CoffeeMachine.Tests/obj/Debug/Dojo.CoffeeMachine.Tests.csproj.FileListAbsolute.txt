@@ -1,0 +1,7 @@
+C:\github\CoffeeMachine\Dojo.CoffeeMachine.Tests\bin\Debug\Dojo.CoffeeMachine.Tests.dll
+C:\github\CoffeeMachine\Dojo.CoffeeMachine.Tests\bin\Debug\Dojo.CoffeeMachine.Tests.pdb
+C:\github\CoffeeMachine\Dojo.CoffeeMachine.Tests\bin\Debug\Dojo.CoffeeMachine.dll
+C:\github\CoffeeMachine\Dojo.CoffeeMachine.Tests\bin\Debug\Dojo.CoffeeMachine.pdb
+C:\github\CoffeeMachine\Dojo.CoffeeMachine.Tests\obj\Debug\Dojo.CoffeeMachine.Tests.csprojResolveAssemblyReference.cache
+C:\github\CoffeeMachine\Dojo.CoffeeMachine.Tests\obj\Debug\Dojo.CoffeeMachine.Tests.dll
+C:\github\CoffeeMachine\Dojo.CoffeeMachine.Tests\obj\Debug\Dojo.CoffeeMachine.Tests.pdb
