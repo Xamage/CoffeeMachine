@@ -43,6 +43,7 @@
     <Compile Include="Drink.cs" />
     <Compile Include="DrinkMaker.cs" />
     <Compile Include="IDrinkMaker.cs" />
+    <Compile Include="MessageEventArgs.cs" />
     <Compile Include="Order.cs" />
     <Compile Include="OrderTranslator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

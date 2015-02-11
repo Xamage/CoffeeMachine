@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Dojo.CoffeeMachine
+﻿namespace Dojo.CoffeeMachine
 {
     public class Order
     {
-        public Drink Drink { get; set; }
+        public Order(Drink drink)
+        {
+            Drink = drink;
+        }
+
+        public Drink Drink { get; protected set; }
 
         public int Sugars { get; set; }
     }
@@ -15,9 +15,9 @@ namespace Dojo.CoffeeMachine
     public class Order<T> : Order
         where T : Drink, new()
     {
-        public Order()
+        public Order() 
+            : base(new T())
         {
-            Drink = new T();
         }
 
         public new T Drink

@@ -20,10 +20,18 @@ namespace Dojo.CoffeeMachine.Tests
         public void GivenAnOrderWithCoffeeAndOneSugarThenGetExpectedCommand()
         {
             // Given
-            _coffeeMachine.Order(new Order { Drink = new Coffee(), Sugars = 1 });
+            _coffeeMachine.Order(new Order(new Coffee()) { Sugars = 1 });
 
             // Then
             Mock.Get(_drinkMaker).Verify(f => f.Process("C:1:0"), Times.Once);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void GivenAnOrderWithUnknownDrinkThenThrowsException()
+        {
+            // Given
+            _coffeeMachine.Order(new Order<CocaCola>());
         }
         
         [TestMethod]
@@ -55,5 +63,30 @@ namespace Dojo.CoffeeMachine.Tests
             // Then
             Mock.Get(_drinkMaker).Verify(f => f.Process("T:2:0"), Times.Once);
         }
+
+        [TestMethod]
+        public void GivenAMessageFromDrinkMakerThenCoffeeMachineDisplaysTheMessage()
+        {
+            // Given
+            _coffeeMachine.Order(new Order<Tea> { Sugars = 2 });
+
+            Mock.Get(_drinkMaker).Raise(d => d.OnSendMessage += null , new MessageEventArgs("Hello"));
+
+            // Then
+            Assert.IsTrue(_coffeeMachine.Messages.Count > 0, "Aucun message reçu");
+            Assert.AreEqual("Hello", _coffeeMachine.Messages.Dequeue());
+        }
+        
+        #region Inner types
+
+        private class CocaCola : Drink
+        {
+            public override string Code
+            {
+                get { return "COKE"; }
+            }
+        }
+
+        #endregion
     }
 }
