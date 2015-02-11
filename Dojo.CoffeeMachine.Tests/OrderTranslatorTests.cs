@@ -7,83 +7,112 @@ namespace Dojo.CoffeeMachine.Tests
     [TestClass]
     public class OrderTranslatorTests
     {
-        private CoffeeMachine _coffeeMachine;
-        private readonly IDrinkMaker _drinkMaker = Mock.Of<IDrinkMaker>();
-
-        [TestInitialize]
-        public void BeforeEachTest()
-        {
-            _coffeeMachine = new CoffeeMachine(_drinkMaker);
-        }
+        private readonly IDrinkMaker _mockDrinkMaker = Mock.Of<IDrinkMaker>();
+        private readonly DrinkMaker _realDrinkMaker = new DrinkMaker();
 
         [TestMethod]
         public void GivenAnOrderWithCoffeeAndOneSugarThenGetExpectedCommand()
         {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
             // Given
-            _coffeeMachine.Order(new Order(new Coffee()) { Sugars = 1 });
+            coffeeMachine.Order(new Order<Coffee>(1) { Sugars = 1 });
 
             // Then
-            Mock.Get(_drinkMaker).Verify(f => f.Process("C:1:0"), Times.Once);
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("C:1:0"), Times.Once);
         }
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]
         public void GivenAnOrderWithUnknownDrinkThenThrowsException()
         {
+            CoffeeMachine coffeeMachine = new CoffeeMachine();
+
             // Given
-            _coffeeMachine.Order(new Order<CocaCola>());
+            coffeeMachine.Order(new Order<CocaCola>());
         }
         
         [TestMethod]
         public void GivenAGenericOrderWithCoffeeAndOneSugarThenGetExpectedCommand()
         {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
             // Given
-            _coffeeMachine.Order(new Order<Coffee> { Sugars = 1 });
+            coffeeMachine.Order(new Order<Coffee>(1) { Sugars = 1 });
 
             // Then
-            Mock.Get(_drinkMaker).Verify(f => f.Process("C:1:0"), Times.Once);
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("C:1:0"), Times.Once);
         }
 
         [TestMethod]
         public void GivenAGenericOrderWithChocolateAndNoSugarThenGetExpectedCommand()
         {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
             // Given
-            _coffeeMachine.Order(new Order<Chocolate>());
+            coffeeMachine.Order(new Order<Chocolate>(1));
 
             // Then
-            Mock.Get(_drinkMaker).Verify(f => f.Process("H::"), Times.Once);
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("H::"), Times.Once);
         }
 
         [TestMethod]
         public void GivenAGenericOrderWithTeaAnd2SugarsThenGetExpectedCommand()
         {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
             // Given
-            _coffeeMachine.Order(new Order<Tea> { Sugars = 2 });
+            coffeeMachine.Order(new Order<Tea>(1) { Sugars = 2 });
 
             // Then
-            Mock.Get(_drinkMaker).Verify(f => f.Process("T:2:0"), Times.Once);
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("T:2:0"), Times.Once);
         }
 
         [TestMethod]
         public void GivenAMessageFromDrinkMakerThenCoffeeMachineDisplaysTheMessage()
         {
-            // Given
-            _coffeeMachine.Order(new Order<Tea> { Sugars = 2 });
+            const string expected = "Hello dear customer!";
+            
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_realDrinkMaker);
 
-            Mock.Get(_drinkMaker).Raise(d => d.OnSendMessage += null , new MessageEventArgs("Hello"));
+            // Given
+            _realDrinkMaker.SendMessage(expected);
 
             // Then
-            Assert.IsTrue(_coffeeMachine.Messages.Count > 0, "Aucun message reçu");
-            Assert.AreEqual("Hello", _coffeeMachine.Messages.Dequeue());
+            Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
+            Assert.AreEqual(expected, coffeeMachine.Messages.Dequeue());
+        }
+        
+        [TestMethod]
+        public void GivenAnOrderWithInsuffisantAmountOfMoneyThenGetExpectedCommand()
+        {
+            const string expected = "Missing 0,40 €";
+
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_realDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order<Tea>());
+
+            // Then
+            Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
+            Assert.AreEqual(expected, coffeeMachine.Messages.Dequeue());
         }
         
         #region Inner types
 
+        /// <summary>
+        /// Une  boisson non gérée par la machine
+        /// </summary>
         private class CocaCola : Drink
         {
             public override string Code
             {
                 get { return "COKE"; }
+            }
+
+            public override double Price
+            {
+                get { return 0; }
             }
         }
 

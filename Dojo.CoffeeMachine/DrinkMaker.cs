@@ -8,11 +8,28 @@ namespace Dojo.CoffeeMachine
 
         public void Process(string order)
         {
-            throw new NotImplementedException("Pas encore implémenté");
+            if (order.StartsWith("M:"))
+            {
+                SendMessage(order.Substring(2));
+            }
+            else if (order.StartsWith("Missing "))
+            {
+                SendMessage(order);
+            }
+
+            // On peut faire la boisson
         }
 
         public event EventHandler<MessageEventArgs> OnSendMessage;
 
         #endregion
+
+        public void SendMessage(string message)
+        {
+            if (OnSendMessage != null)
+            {
+                OnSendMessage(this, new MessageEventArgs(message));
+            }
+        }
     }
 }

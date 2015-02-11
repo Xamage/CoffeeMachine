@@ -20,6 +20,12 @@ namespace Dojo.CoffeeMachine
 
         public void Order(Order order)
         {
+            if (order.GivenAmount < order.Drink.Price)
+            {
+                DrinkMaker.Process(string.Format("Missing {0:0.00} €", order.Drink.Price - order.GivenAmount));
+                return;
+            }
+
             DrinkMaker.Process(OrderTranslator.Translate(order));
         }
 

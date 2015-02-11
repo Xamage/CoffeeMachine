@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Dojo.CoffeeMachine
+﻿namespace Dojo.CoffeeMachine
 {
     public abstract class Drink
     {
         public abstract string Code { get; }
+        public abstract double Price { get; }
     }
 
     public class Coffee : Drink
@@ -15,6 +11,11 @@ namespace Dojo.CoffeeMachine
         public override string Code
         {
             get { return "C"; }
+        }
+
+        public override double Price
+        {
+            get { return 0.6; }
         }
     }
 
@@ -24,6 +25,11 @@ namespace Dojo.CoffeeMachine
         {
             get { return "H"; }
         }
+
+        public override double Price
+        {
+            get { return 0.5; }
+        }
     }
 
     public class Tea : Drink
@@ -31,6 +37,11 @@ namespace Dojo.CoffeeMachine
         public override string Code
         {
             get { return "T"; }
+        }
+
+        public override double Price
+        {
+            get { return 0.4; }
         }
     }
 }
