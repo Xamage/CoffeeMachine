@@ -84,7 +84,7 @@ namespace Dojo.CoffeeMachine.Tests
         }
         
         [TestMethod]
-        public void GivenAnOrderWithInsuffisantAmountOfMoneyThenGetExpectedCommand()
+        public void GivenAnOrderWithInsuffisantAmountOfMoneyThenGetExpectedMessage()
         {
             const string expected = "Missing 0,40 €";
 
@@ -97,6 +97,70 @@ namespace Dojo.CoffeeMachine.Tests
             Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
             Assert.AreEqual(expected, coffeeMachine.Messages.Dequeue());
         }
+
+        [TestMethod]
+        public void GivenAnOrderWithExtraHotChocolateThenGetExpectedCommand()
+        {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order<ExtraHotChocolate>(1));
+
+            // Then
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Hh::"), Times.Once);
+        }
+
+        [TestMethod]
+        public void GivenAnOrderWithExtraHotCoffeeThenGetExpectedCommand()
+        {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order<ExtraHotCoffee>(1));
+
+            // Then
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Ch::"), Times.Once);
+        }
+
+        [TestMethod]
+        public void GivenAnOrderWithExtraHotTeaThenGetExpectedCommand()
+        {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order<ExtraHotTea>(1));
+
+            // Then
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Th::"), Times.Once);
+        }
+
+        [TestMethod]
+        public void GivenAnOrderWithOrangeJuiceThenGetExpectedCommand()
+        {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order<OrangeJuice>(1));
+
+            // Then
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("O::"), Times.Once);
+        }
+
+        [TestMethod]
+        public void GivenAnOrderOfOrangeJuiceWithInsuffisantAmountOfMoneyThenGetExpectedMessage()
+        {
+            const string expected = "Missing 0,60 €";
+
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_realDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order<OrangeJuice>());
+
+            // Then
+            Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
+            Assert.AreEqual(expected, coffeeMachine.Messages.Dequeue());
+        }
+
         
         #region Inner types
 

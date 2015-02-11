@@ -19,6 +19,14 @@
         }
     }
 
+    public class ExtraHotCoffee : Coffee
+    {
+        public override string Code
+        {
+            get { return "Ch"; }
+        }
+    }
+
     public class Chocolate : Drink
     {
         public override string Code
@@ -29,6 +37,14 @@
         public override double Price
         {
             get { return 0.5; }
+        }
+    }
+
+    public class ExtraHotChocolate : Chocolate
+    {
+        public override string Code
+        {
+            get { return "Hh"; }
         }
     }
 
@@ -44,4 +60,26 @@
             get { return 0.4; }
         }
     }
+
+    public class ExtraHotTea : Tea
+    {
+        public override string Code
+        {
+            get { return "Th"; }
+        }
+    }
+
+    public class OrangeJuice : Drink
+    {
+        public override string Code
+        {
+            get { return "O"; }
+        }
+
+        public override double Price
+        {
+            get { return 0.6; }
+        }
+    }
+
 }

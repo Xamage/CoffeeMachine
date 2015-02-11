@@ -7,9 +7,13 @@ namespace Dojo.CoffeeMachine
     {
         private readonly Dictionary<Type, string> _drinkCommandTemplates = new Dictionary<Type, string>
         {
-            { typeof(Chocolate),"H:{0}:{1}" },
-            { typeof(Coffee),   "C:{0}:{1}" },
-            { typeof(Tea),      "T:{0}:{1}" },
+            { typeof(Chocolate), "H:{0}:{1}" },
+            { typeof(Coffee), "C:{0}:{1}" },
+            { typeof(Tea), "T:{0}:{1}" },
+            { typeof(ExtraHotChocolate), "Hh:{0}:{1}"},
+            { typeof(ExtraHotCoffee), "Ch:{0}:{1}" },
+            { typeof(ExtraHotTea), "Th:{0}:{1}" },
+            { typeof(OrangeJuice), "O:{0}:{1}" }
         };
 
         public string Translate(Order order)
