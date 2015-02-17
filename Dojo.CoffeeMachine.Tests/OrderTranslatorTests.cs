@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace Dojo.CoffeeMachine.Tests
@@ -180,6 +182,42 @@ namespace Dojo.CoffeeMachine.Tests
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Cml:2:0"), Times.Once);
+        }
+
+        [TestMethod]
+        public void GivenOneOrderOfCoffeeThenGetExpectedReport()
+        {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order(new Coffee(), 1));
+
+            IEnumerable<string> actual = coffeeMachine.GetReport();
+
+            Assert.AreEqual(1, actual.Count(), "Le rapport ne contient pas le bon nombre de boissons");
+
+            Assert.IsTrue(actual.Any(o => o == "C:1:0,60")); // 1 café pour un total de 0,60 €
+        }
+        [TestMethod]
+        public void GivenSomeOrdersThenGetExpectedReport()
+        {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order(new OrangeJuice(), 1));
+            coffeeMachine.Order(new Order(new ExtraHot(new Chocolate()), 1));
+            coffeeMachine.Order(new Order(new OrangeJuice(), 1));
+            coffeeMachine.Order(new Order(new ExtraHot(new Chocolate()), 1));
+            coffeeMachine.Order(new Order(new Milk(new Macchiato(new Coffee())), 1) { Sugars = 2 });
+            coffeeMachine.Order(new Order(new ExtraHot(new Chocolate()), 1));
+
+            IEnumerable<string> actual = coffeeMachine.GetReport();
+
+            Assert.AreEqual(3, actual.Count(), "Le rapport ne contient pas le bon nombre de boissons");
+
+            Assert.IsTrue(actual.Any(o => o == "O:2:1,20")); // 2 jus d'orange pour un total de 1,20 €
+            Assert.IsTrue(actual.Any(o => o == "Hh:3:1,50")); // 3 chocolats extra chaud pour un total de 1,50 €
+            Assert.IsTrue(actual.Any(o => o == "Cml:1:1,00")); // 1 café latté macchiato pour un total de 1 €
         }
     }
 }
