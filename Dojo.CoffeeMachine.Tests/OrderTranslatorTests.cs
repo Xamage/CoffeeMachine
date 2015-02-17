@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
 namespace Dojo.CoffeeMachine.Tests
@@ -16,29 +15,7 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<Coffee>(1) { Sugars = 1 });
-
-            // Then
-            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("C:1:0"), Times.Once);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(Exception))]
-        public void GivenAnOrderWithUnknownDrinkThenThrowsException()
-        {
-            CoffeeMachine coffeeMachine = new CoffeeMachine();
-
-            // Given
-            coffeeMachine.Order(new Order<CocaCola>());
-        }
-        
-        [TestMethod]
-        public void GivenAGenericOrderWithCoffeeAndOneSugarThenGetExpectedCommand()
-        {
-            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
-
-            // Given
-            coffeeMachine.Order(new Order<Coffee>(1) { Sugars = 1 });
+            coffeeMachine.Order(new Order(new Coffee(), 1) { Sugars = 1 });
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("C:1:0"), Times.Once);
@@ -50,19 +27,19 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<Chocolate>(1));
+            coffeeMachine.Order(new Order(new Chocolate(), 1));
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("H::"), Times.Once);
         }
 
         [TestMethod]
-        public void GivenAGenericOrderWithTeaAnd2SugarsThenGetExpectedCommand()
+        public void GivenAnOrderWithTeaAnd2SugarsThenGetExpectedCommand()
         {
             CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<Tea>(1) { Sugars = 2 });
+            coffeeMachine.Order(new Order(new Tea(), 1) { Sugars = 2 });
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("T:2:0"), Times.Once);
@@ -91,7 +68,7 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_realDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<Tea>());
+            coffeeMachine.Order(new Order(new Tea()));
 
             // Then
             Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
@@ -104,7 +81,7 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<ExtraHotChocolate>(1));
+            coffeeMachine.Order(new Order(new ExtraHot(new Chocolate()), 1));
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Hh::"), Times.Once);
@@ -116,7 +93,7 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<ExtraHotCoffee>(1));
+            coffeeMachine.Order(new Order(new ExtraHot(new Coffee()), 1));
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Ch::"), Times.Once);
@@ -128,7 +105,7 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<ExtraHotTea>(1));
+            coffeeMachine.Order(new Order(new ExtraHot(new Tea()), 1));
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Th::"), Times.Once);
@@ -140,7 +117,7 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<OrangeJuice>(1));
+            coffeeMachine.Order(new Order(new OrangeJuice(), 1));
 
             // Then
             Mock.Get(_mockDrinkMaker).Verify(f => f.Process("O::"), Times.Once);
@@ -154,32 +131,55 @@ namespace Dojo.CoffeeMachine.Tests
             CoffeeMachine coffeeMachine = new CoffeeMachine(_realDrinkMaker);
 
             // Given
-            coffeeMachine.Order(new Order<OrangeJuice>());
+            coffeeMachine.Order(new Order(new OrangeJuice()));
 
             // Then
             Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
             Assert.AreEqual(expected, coffeeMachine.Messages.Dequeue());
         }
 
-        
-        #region Inner types
-
-        /// <summary>
-        /// Une  boisson non gérée par la machine
-        /// </summary>
-        private class CocaCola : Drink
+        [TestMethod]
+        public void GivenAnOrderOfCoffeeWithMachiattoOptionAndInsuffisantAmountOfMoneyThenGetExpectedMessage()
         {
-            public override string Code
-            {
-                get { return "COKE"; }
-            }
+            // l'option Macchiato coute 0,30 €, donc le café macchiato coute 0,60 + 0,30 = 0,90 €
+            const string expected = "Missing 0,90 €";
 
-            public override double Price
-            {
-                get { return 0; }
-            }
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_realDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order(new Macchiato(new Coffee())));
+
+            // Then
+            Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
+            Assert.AreEqual(expected, coffeeMachine.Messages.Dequeue());
         }
 
-        #endregion
+        [TestMethod]
+        public void GivenAnOrderOfCoffeeWithMachiattoAndMilkOptionsAndInsuffisantAmountOfMoneyThenGetExpectedMessage()
+        {
+            // l'option Macchiato coute 0,30 €, l'option lait coute 0,10 €, donc le café latte macchiato coute 0,60 + 0,30 + 0,10 = 1,00 €
+            const string expected = "Missing 1,00 €";
+
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_realDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order(new Milk(new Macchiato(new Coffee()))));
+
+            // Then
+            Assert.IsTrue(coffeeMachine.Messages.Count > 0, "Aucun message reçu");
+            Assert.AreEqual(expected, coffeeMachine.Messages.Dequeue());
+        }
+
+        [TestMethod]
+        public void GivenAnOrderOfCoffeeWithMachiattoAndMilkOptionsAndTowSugarsAndInsuffisantAmountOfMoneyThenGetExpectedCommand()
+        {
+            CoffeeMachine coffeeMachine = new CoffeeMachine(_mockDrinkMaker);
+
+            // Given
+            coffeeMachine.Order(new Order(new Milk(new Macchiato(new Coffee())), 1) { Sugars = 2 });
+
+            // Then
+            Mock.Get(_mockDrinkMaker).Verify(f => f.Process("Cml:2:0"), Times.Once);
+        }
     }
 }

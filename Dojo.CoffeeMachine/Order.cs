@@ -15,18 +15,4 @@
         public double GivenAmount { get; set; }
     }
 
-    public class Order<T> : Order
-        where T : Drink, new()
-    {
-        public Order(double amount = 0) 
-            : base(new T(), amount)
-        {
-        }
-
-        public new T Drink
-        {
-            get { return base.Drink as T; }
-            set { base.Drink  = value; }
-        }
-    }
 }

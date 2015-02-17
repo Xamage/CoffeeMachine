@@ -18,6 +18,10 @@ namespace Dojo.CoffeeMachine
 
         public Queue<string> Messages { get; private set; }
 
+        /// <summary>
+        /// Lance le traitement d'une commande spécifiée
+        /// </summary>
+        /// <param name="order">La commande à traiter</param>
         public void Order(Order order)
         {
             if (order.GivenAmount < order.Drink.Price)
